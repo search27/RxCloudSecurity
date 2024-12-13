@@ -1,0 +1,253 @@
+<html>
+    <head>
+
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <title>RX 정보보안 (보안의 중요성) - 비밀번호 모의 해킹</title>
+        <!-- <link rel="shortcut icon" href="/images/rxai.ico"> -->
+
+        <link href="./public/css/base.css" rel="stylesheet" type="text/css">
+        <link href="./public/css/style.css" rel="stylesheet" type="text/css">
+
+        <script src="./public/js/PasswordCracker.js"></script>
+
+        <script>
+
+
+
+            const ClosePannel = () => {
+                const notice = document.getElementById('notice');
+                notice.style.display = 'none';
+            }
+
+
+            secretNumber = '12345';
+            const SetPassword = (e) => { secretNumber = String(e.target.value); }
+
+
+            const ChangeOption = (e) => {
+                SetPossible(e.target.value);
+            }
+
+
+            const InlineWorker = (callback, param1, param2) => { setTimeout(function(){callback(param1, param2)}, 0); }
+
+
+            // Timer
+
+            // const GetMilliSec = (dt) => { return dt.getMilliseconds(); }
+            const DisplaySec = (millisec, ele) => {
+
+
+                let sec = (millisec / 1000) % 60;
+                if(sec < 10) sec = '0' + sec;
+                let min = (millisec / (1000 * 60)) % 60;
+                min = Math.floor(min);
+                if(min < 10) min = '0' + min;
+                let hour = (millisec / (1000 * 60 * 60)) % 24;
+                hour = Math.floor(hour);
+                if(hour < 10) hour = '0' + hour;
+
+
+                ele.innerHTML = `${hour} : ${min} : ${sec}`;
+            }
+
+
+
+            let currentTime, measureTime;
+            const StartTime = () => {
+                currentTime = new Date();
+                isTimerStart = true;
+            }
+            const GoingOnTime = () => {
+                measureTime = new Date();
+
+                const diff = measureTime.getTime() - currentTime.getTime();
+
+                const resultTimer = document.getElementById('resultTimer');
+                const stTimer = document.getElementById('stTimer');
+                const enTimer = document.getElementById('enTimer');
+
+                // console.log(diff);
+                DisplaySec(diff, resultTimer);
+
+            }
+            const EndTime = () => {
+                isTimerStart = false;
+            }
+
+            
+            let msg;
+            window.onload = function(){
+
+
+                // Display Msg
+                msg = document.getElementById('msg');
+
+                // Default Setting Password.
+                const passw = document.getElementById('passw');
+                passw.value = secretNumber;
+
+            }
+
+
+            const callback = (opt) => {
+                msg.innerHTML = `${opt.target} 자리수 탐색합니다. (총 탐색 횟수 : ${opt.count})`;
+                GoingOnTime();
+            }
+
+            const StartClick = () => {
+
+                const startBtn = document.getElementById('startBtn');
+                const resultMsg = document.getElementById('resultMsg');
+
+                if(isStop){
+                    startBtn.innerHTML = '죵료';
+                    InlineWorker(function(){ msg.innerHTML = `시작합니당-`; });
+                    resultMsg.innerHTML = ``;
+
+                    StartTime();
+                    FindSecretNumber(callback);
+                }else{
+                    StopClick();
+                }
+                
+            }
+
+            const StopClick = (str) => {
+                isStop = true;
+
+                const resultMsg = document.getElementById('resultMsg');
+
+                if(UnLocked){
+                    resultMsg.innerHTML = `찾아낸 패스워드는 <span class='s-strong'>${str}</span>입니다.`;
+                }else{
+                    InlineWorker(function(){
+                        msg.innerHTML = `비밀번호를 찾지 못했습니다.`;
+                    });
+                    
+                    resultMsg.innerHTML = ``;
+
+                }
+
+                const startBtn = document.getElementById('startBtn');
+                startBtn.innerHTML = '시작';
+
+                EndTime();
+                
+            }
+
+
+        </script>
+
+    </head>
+    <body>
+
+
+        <div class="wrapper">
+
+            <section class="section1">
+                <div>
+
+                    <h2 class="mint">에에? 보안을 모르신다구요? <span> - Ellis 아이스크림</span></h2>
+
+                </div>
+                <div>
+                    <img class="c1" src="./public/images/Ellis_5.webp" />
+                </div>
+            </section>
+
+            <section class="hec">
+
+                <div class="hec-wr">
+                    <h2 class="nt"><span class="s-strong">모의 해킹하기</span></h2>
+                    <div class="exp">
+                        <p> * 해당 사이트는 비밀번호를 해킹하는데 걸리는 <span class="s-strong">'시간'</span>을 측정하기 위해 제작되었습니다. </p>
+                        <p> * 프로그램 로직은 존재할 수 있는 <span class="s-strong">모든 경우의 수를 대입했을 때 걸리는 시간</span>을 측정합니다. </p>
+                        <p> * 6자리부터는 속도가 느려질 수 있습니다. </p>
+                    </div>
+
+                    <div class="ops">
+                        <span>설정</span>
+                        <label> <input type="radio" name="opt" value="1" onchange="ChangeOption(event)" />  - 숫자만</label>
+                        <label> <input type="radio" name="opt" value="2" onchange="ChangeOption(event)" />  - 숫자 + 영문자(소)</label>
+                        <label> <input type="radio" name="opt" value="3" onchange="ChangeOption(event)" checked/>  - 숫자 + 영문자(소) + 영문자(대)</label>
+                        <label> <input type="radio" name="opt" value="5" onchange="ChangeOption(event)" />  - 숫자 + 영문자(소) + 영문자(대) + 특수문자</label>
+                    </div>
+
+                    <label class="target-sec"> 대상이 될 테스트용 비밀번호 설정 :  <input id="passw" type="text" onkeyup="SetPassword(event)" /> </label>
+
+                    <div class="start-btn">
+                        <button id="startBtn" onclick="StartClick()">시작</button>
+                    </div>
+                </div>
+
+                <div>
+
+                    <h2 class="nt"><span>결과</span></h2>
+
+                    <div>
+                        <div>
+                            <p id="msg"></p>
+                            <p id="resultMsg"></p>
+                        </div>
+                        <div>
+                            <span>총 걸린 시간</span>
+                            <span id="resultTimer">00 : 00</span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <section class="section2">
+                
+                <div>
+                    <img class="c2" src="./public/images/Esia_5.webp" />
+                </div>
+                <div>
+                    <h2 class="mint2">으으... 비밀번호가 털렸어요... <span> - Esia</span></h2>
+                </div>
+            </section>
+
+            <section class="section3">
+                <div>
+
+                    <h2 class="mint3">이제 보안 잘 지키실 거죠오?<span> - Esia</span></h2>
+
+                </div>
+                <div>
+                    <img class="c3" src="./public/images/Esia_4.webp" />
+                </div>
+            </section>
+
+        </div>
+
+
+        <div class="notice">
+            <img src="./public/images/rx_apis_logo3.webp" />
+            <span>해당 사이트는 클라우드 RX에서 제공합니다. (데스크탑 버전)</span>
+        </div>
+
+
+        <div id="notice" class="mentions" onclick="ClosePannel()">
+
+            <div>
+                <img src="./public/images/rxSecurity.webp" />
+                <h3>Cloud Rx 정보보안실</h3>
+                <div>
+                    <p> 해당 사이트는 비밀번호를 12345로 설정할 경우, 그 취약점이 얼마나 약한가를 테스트하기 위해 제작되었습니다.</p>
+                    <p> 본인이 테스트해 본 결과 비밀번호 5자리 수까지 탐색하는데 2~3초 사이였습니다.</p>
+                    <p> 또한 비밀번호를 탐색하기 위해 '코드 작성'에 걸린 시간 또한 1분 남짓이었습니다.</p>
+                    <p> 위 말은 보안이 취약한 특정 기관이 있다면, '즉석해서' 해당 '코드를 작성'해서 '해킹'하는 게 가능하다는 것을 의미합니다.</p>
+                    <p> 해당 사이트를 통해 '보안의 취약점'을 알리고, '모두'가 보안에 신경 써주셨으면 좋겠다고 생각합니다.</p>
+                </div>
+            </div>
+            
+        </div>
+
+    </body>
+</html>
