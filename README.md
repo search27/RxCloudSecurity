@@ -4,7 +4,7 @@ RxCloudSecurity
 ## 정보 보안의 중요성
 
 * 정보 보안의 중요성을 알리기 위해 제작되었습니다.
-* 해당 프로그램은 Cloud Rx (https://rxapis.com)에서 제공합니다.
+* 해당 프로그램은 Cloud Rx ( <a href='https://rxapis.com'>https://rxapis.com</a> )에서 제공합니다.
 
 
 
